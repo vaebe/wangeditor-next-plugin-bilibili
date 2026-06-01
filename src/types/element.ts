@@ -25,3 +25,15 @@ export interface BilibiliVideoElement {
 export function isBilibiliVideoElement(elem: SlateElement): elem is BilibiliVideoElement {
   return (elem as { type?: string }).type === BILIBILI_VIDEO_TYPE
 }
+
+/**
+ * 扩展 wangEditor-next 的 `CustomTypes`，使编辑器在处理 `bilibili-video`
+ * 元素时拥有完整类型信息（`elem.bvid` / `elem.src`）。
+ *
+ * 该声明随本模块被引用进入发布的 `.d.ts`，使用方无需额外导入即可获得类型增强。
+ */
+declare module '@wangeditor-next/editor' {
+  interface CustomTypes {
+    Element: BilibiliVideoElement
+  }
+}
