@@ -5,3 +5,7 @@ coverage
 .DS_Store
 .idea
 .vscode
+
+# VitePress
+docs/.vitepress/dist
+docs/.vitepress/cache
