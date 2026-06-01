@@ -14,6 +14,7 @@ export default defineConfig({
   themeConfig: {
     nav: [
       { text: '指南', link: '/guide/getting-started' },
+      { text: '在线演示', link: '/guide/demo' },
       { text: 'API', link: '/api/' },
       {
         text: 'v0.1.1',
@@ -30,6 +31,7 @@ export default defineConfig({
           text: '开始',
           items: [
             { text: '快速上手', link: '/guide/getting-started' },
+            { text: '在线演示', link: '/guide/demo' },
             { text: '框架集成', link: '/guide/frameworks' },
           ],
         },

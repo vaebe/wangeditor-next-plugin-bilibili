@@ -10,6 +10,9 @@ hero:
       text: 快速上手
       link: /guide/getting-started
     - theme: alt
+      text: 在线演示
+      link: /guide/demo
+    - theme: alt
       text: API 参考
       link: /api/
     - theme: alt
