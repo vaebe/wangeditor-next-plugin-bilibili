@@ -4,6 +4,8 @@ const pkgName = '@vaebe/wangeditor-next-plugin-bilibili'
 
 export default defineConfig({
   lang: 'zh-CN',
+  // GitHub Pages 项目站点部署在 https://vaebe.github.io/wangeditor-next-plugin-bilibili/
+  base: '/wangeditor-next-plugin-bilibili/',
   title: 'wangEditor-next Bilibili 插件',
   description: '适用于 wangEditor-next 的 Bilibili 视频插件：插入、粘贴解析、渲染、序列化。',
   lastUpdated: true,
