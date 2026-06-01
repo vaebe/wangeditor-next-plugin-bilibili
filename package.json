@@ -1,6 +1,6 @@
 {
   "name": "@vaebe/wangeditor-next-plugin-bilibili",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Bilibili video plugin for wangEditor-next: insert, paste-parse, render and serialize Bilibili videos.",
   "type": "module",
   "license": "MIT",
