@@ -1,0 +1,12 @@
+src
+test
+.changeset
+node_modules
+coverage
+*.config.ts
+*.config.js
+tsconfig.json
+eslint.config.js
+pnpm-lock.yaml
+*.log
+.DS_Store
