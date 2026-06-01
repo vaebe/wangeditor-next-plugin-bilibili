@@ -62,6 +62,14 @@ export class InsertBilibiliMenu implements IDropPanelMenu {
       color: THEME_COLOR,
     })
 
+    // wangEditor 工具栏根节点绑定了 `mousedown -> preventDefault`（点按钮时防止
+    // 编辑器失焦）。面板是工具栏子节点，点输入框时 mousedown 会冒泡到工具栏被
+    // preventDefault，导致输入框无法聚焦、打不了字。这里在面板内阻止冒泡，让焦点
+    // 正常落到输入框；面板的显隐由按钮点击驱动，不依赖此处的 mousedown。
+    content.addEventListener('mousedown', (event) => {
+      event.stopPropagation()
+    })
+
     const label = document.createElement('label')
     applyStyles(label, { display: 'block', marginBottom: '6px', fontSize: '14px' })
     label.textContent = 'Bilibili 视频链接'
