@@ -46,6 +46,8 @@ export function renderBilibiliVideo(
       style: {
         position: 'relative',
         width: '100%',
+        // 上下各留 8px 间距，与相邻段落分隔。
+        margin: '8px 0',
         paddingBottom: '56.25%',
         height: '0',
         overflow: 'hidden',

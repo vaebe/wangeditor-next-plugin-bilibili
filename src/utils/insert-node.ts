@@ -1,11 +1,11 @@
-import { SlateTransforms } from '@wangeditor-next/editor'
+import { SlateEditor, SlateTransforms } from '@wangeditor-next/editor'
 import type { IDomEditor } from '@wangeditor-next/editor'
 import { BILIBILI_VIDEO_TYPE } from '../constants'
 import type { BilibiliVideoElement } from '../types/element'
 import { buildPlayerSrc } from './player'
 
 /**
- * 根据 BV 号构造 {@link BilibiliVideoElement} 并插入到编辑器当前选区。
+ * 根据 BV 号构造 {@link BilibiliVideoElement} 并插入到编辑器。
  *
  * 作为「粘贴解析」与「菜单插入」两条路径的公共出口，保证插入逻辑唯一。
  *
@@ -20,6 +20,8 @@ export function insertBilibiliVideoNode(editor: IDomEditor, bvid: string): void 
     children: [{ text: '' }],
   }
 
-  // void 元素需作为独立块插入。
-  SlateTransforms.insertNodes(editor, node)
+  // 选区为空时（如未聚焦编辑器、直接通过下拉面板菜单插入）兜底到文档末尾，
+  // 避免 insertNodes 因无 selection 而静默失败（无任何提示地“点确定没反应”）。
+  const at = editor.selection ?? SlateEditor.end(editor, [])
+  SlateTransforms.insertNodes(editor, node, { at })
 }

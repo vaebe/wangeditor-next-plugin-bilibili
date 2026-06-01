@@ -1,23 +1,35 @@
-import type { IDomEditor, IModalMenu } from '@wangeditor-next/editor'
+import type { IDomEditor, IDropPanelMenu } from '@wangeditor-next/editor'
 import { parseBilibiliUrl } from '../utils/url'
 import { insertBilibiliVideoNode } from '../utils/insert-node'
 
-/** Bilibili「电视」图标（toolbar 按钮）。 */
+/** Bilibili 图标（simple-icons 官方 logo，viewBox 居中铺满，不裁切）。 */
 const BILIBILI_ICON_SVG =
-  '<svg viewBox="0 0 1024 1024" width="1em" height="1em"><path fill="currentColor" d="M306 105.7c10.5 10.4 18.9 22.4 25.4 36.3h361.2c6.5-13.9 14.9-25.9 25.4-36.3 16.6-16.6 36.7-24.9 60.3-24.9 23.6 0 43.7 8.3 60.3 24.9 16.6 16.6 24.9 36.7 24.9 60.3 0 16.7-4.4 31.9-13.1 45.4h28.2c46.9 0 86.9 16.6 120 49.7 33.1 33.1 49.7 73.1 49.7 120v347c0 46.9-16.6 86.9-49.7 120-33.1 33.1-73.1 49.7-120 49.7H146.5c-46.9 0-86.9-16.6-120-49.7C-6.6 814.9-23.2 774.9-23.2 728V381c0-46.9 16.6-86.9 49.7-120 33.1-33.1 73.1-49.7 120-49.7h28.2c-8.7-13.5-13.1-28.7-13.1-45.4 0-23.6 8.3-43.7 24.9-60.3 16.6-16.6 36.7-24.9 60.3-24.9 23.6 0 43.7 8.3 60.3 24.9zm-159.5 178c-26.9 0-49.7 9.4-68.4 28.1S50 353.3 50 381v347c0 27.7 9.4 50.5 28.1 69.2s41.5 28.1 68.4 28.1h731c26.9 0 49.7-9.4 68.4-28.1S974 755.7 974 728V381c0-27.7-9.4-50.5-28.1-69.2s-41.5-28.1-68.4-28.1h-731zm165 138c11.7 0 21.7 4.1 30 12.4l78 78h138l78-78c8.3-8.3 18.3-12.4 30-12.4 11.7 0 21.7 4.1 30 12.4 8.3 8.3 12.4 18.3 12.4 30s-4.1 21.7-12.4 30l-26 26h26c11.7 0 21.7 4.1 30 12.4 8.3 8.3 12.4 18.3 12.4 30s-4.1 21.7-12.4 30-18.3 12.4-30 12.4-21.7-4.1-30-12.4l-78-78h-138l-78 78c-8.3 8.3-18.3 12.4-30 12.4z"/></svg>'
+  '<svg viewBox="0 0 24 24" width="1em" height="1em"><path fill="currentColor" d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .356-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.249-.56.373-.933.373s-.684-.124-.933-.373c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.249-.56.373-.933.373s-.684-.124-.933-.373c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373z"/></svg>'
+
+/** 复用 wangEditor 主题 CSS 变量，保证与编辑器（含暗色主题）一致。 */
+const THEME_COLOR = 'var(--w-e-toolbar-color)'
+const THEME_BG = 'var(--w-e-toolbar-bg-color)'
+const THEME_BORDER = '1px solid var(--w-e-modal-button-border-color)'
+
+/** 批量设置内联样式的小工具，避免逐行 `el.style.xxx = ...` 的冗长重复。 */
+function applyStyles(el: HTMLElement, styles: Partial<CSSStyleDeclaration>): void {
+  Object.assign(el.style, styles)
+}
 
 /**
- * 「插入 B站视频」自定义菜单（弹窗式）。
+ * 「插入 B站视频」自定义菜单（下拉面板式）。
  *
- * 点击后弹出一个含「视频链接」输入框的面板，用户粘贴受支持的 Bilibili
- * 视频直链并确认后插入视频节点。校验与解析复用 {@link parseBilibiliUrl}。
+ * 采用 {@link IDropPanelMenu}：面板**固定显示在工具栏按钮正下方**，与编辑器
+ * 选区无关——避免 ModalMenu 因弹窗跟随选区、在已插入视频后定位到视频上的问题。
+ *
+ * 面板内含一个「视频链接」输入框，用户粘贴受支持的 Bilibili 视频直链并确认后
+ * 插入视频节点。校验与解析复用 {@link parseBilibiliUrl}。
  */
-export class InsertBilibiliMenu implements IModalMenu {
+export class InsertBilibiliMenu implements IDropPanelMenu {
   readonly title = '插入 B站视频'
   readonly tag = 'button'
   readonly iconSvg = BILIBILI_ICON_SVG
-  readonly showModal = true
-  readonly modalWidth = 300
+  readonly showDropPanel = true
 
   /** void 菜单：返回值无意义。 */
   getValue(_editor: IDomEditor): string | boolean {
@@ -32,45 +44,61 @@ export class InsertBilibiliMenu implements IModalMenu {
     return false
   }
 
-  /** 弹窗驱动，无需 `exec`。 */
+  /** 面板驱动，无需 `exec`。 */
   exec(_editor: IDomEditor, _value: string | boolean): void {
     // do nothing
   }
 
-  /** 弹窗定位锚点：不依赖选区节点，返回 null。 */
-  getModalPositionNode(_editor: IDomEditor): null {
-    return null
-  }
-
-  /** 构造弹窗内容 DOM。每次打开都新建，避免状态残留。 */
-  getModalContentElem(editor: IDomEditor): HTMLElement {
+  /** 构造下拉面板内容 DOM。每次打开都新建，避免状态残留。 */
+  getPanelContentElem(editor: IDomEditor): HTMLElement {
     const content = document.createElement('div')
-    content.className = 'w-e-bilibili-modal'
+    content.className = 'w-e-bilibili-panel'
+    // DropPanel 无 modalWidth，自行约束尺寸；左对齐并继承编辑器主题色。
+    applyStyles(content, {
+      minWidth: '280px',
+      padding: '4px',
+      textAlign: 'left',
+      boxSizing: 'border-box',
+      color: THEME_COLOR,
+    })
 
     const label = document.createElement('label')
-    label.style.display = 'block'
-    label.style.marginBottom = '8px'
-    label.style.fontSize = '14px'
+    applyStyles(label, { display: 'block', marginBottom: '6px', fontSize: '14px' })
     label.textContent = 'Bilibili 视频链接'
 
     const input = document.createElement('input')
     input.type = 'text'
     input.placeholder = 'https://www.bilibili.com/video/BV...'
-    input.style.width = '100%'
-    input.style.boxSizing = 'border-box'
-    input.style.marginTop = '4px'
+    // 对齐 wangEditor 内置 modal 输入框样式（复用主题变量）；
+    // 不抑制 outline，保留浏览器默认聚焦轮廓（可访问性）。
+    applyStyles(input, {
+      display: 'block',
+      width: '100%',
+      marginTop: '6px',
+      padding: '4.5px 11px',
+      border: THEME_BORDER,
+      borderRadius: '4px',
+      backgroundColor: THEME_BG,
+      color: THEME_COLOR,
+      boxSizing: 'border-box',
+    })
     label.appendChild(input)
 
     const tip = document.createElement('div')
-    tip.style.color = '#f5222d'
-    tip.style.fontSize = '12px'
-    tip.style.minHeight = '16px'
-    tip.style.margin = '4px 0'
+    applyStyles(tip, { color: '#f5222d', fontSize: '12px', minHeight: '8px', margin: '3px 0' })
 
     const button = document.createElement('button')
     button.type = 'button'
     button.textContent = '确定'
-    button.style.cursor = 'pointer'
+    // 与输入框一致的描边风格，协调且适配主题。
+    applyStyles(button, {
+      padding: '5px 16px',
+      border: THEME_BORDER,
+      borderRadius: '4px',
+      backgroundColor: THEME_BG,
+      color: THEME_COLOR,
+      cursor: 'pointer',
+    })
 
     const submit = (): void => {
       const { matched, bvid } = parseBilibiliUrl(input.value.trim())
@@ -85,7 +113,8 @@ export class InsertBilibiliMenu implements IModalMenu {
 
     button.addEventListener('click', submit)
     input.addEventListener('keyup', (event) => {
-      if (event.key === 'Enter') {
+      // 排除输入法组合输入：IME 用 Enter 确认候选词时不应误触发提交。
+      if (event.key === 'Enter' && !event.isComposing) {
         submit()
       }
     })
