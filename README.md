@@ -1,6 +1,8 @@
-# wangeditor-next-plugin-bilibili
+# @vaebe/wangeditor-next-plugin-bilibili
 
 适用于 [wangEditor-next](https://wangeditor-next.github.io/) 的 **Bilibili 视频插件**：支持插入、粘贴自动解析、渲染（响应式 16:9 iframe）、HTML 导出与还原。
+
+📖 **完整文档**：<https://vaebe.github.io/wangeditor-next-plugin-bilibili/> ｜ 📦 **npm**：[`@vaebe/wangeditor-next-plugin-bilibili`](https://www.npmjs.com/package/@vaebe/wangeditor-next-plugin-bilibili)
 
 - ✅ TypeScript，输出 `.d.ts`，无 `any`
 - ✅ ESM + CJS 双格式，支持 tree-shaking
@@ -11,7 +13,7 @@
 ## 安装
 
 ```bash
-pnpm add wangeditor-next-plugin-bilibili
+pnpm add @vaebe/wangeditor-next-plugin-bilibili
 # 同时确保已安装 peerDependency
 pnpm add @wangeditor-next/editor
 ```
@@ -23,7 +25,7 @@ pnpm add @wangeditor-next/editor
 `registerBilibiliPlugin()` **必须在创建编辑器实例之前调用**，全局只需一次（内部已做幂等保护）。
 
 ```ts
-import { registerBilibiliPlugin } from 'wangeditor-next-plugin-bilibili'
+import { registerBilibiliPlugin } from '@vaebe/wangeditor-next-plugin-bilibili'
 
 registerBilibiliPlugin()
 ```
@@ -43,7 +45,7 @@ const toolbarConfig: Partial<IToolbarConfig> = {
 }
 ```
 
-点击该菜单会弹出输入框，粘贴 Bilibili 视频链接后即可插入。
+点击工具栏上的「插入 B站视频」按钮，会在按钮正下方弹出**下拉面板**，粘贴 Bilibili 视频链接并确认后即可插入。
 
 ## Vue3 示例
 
@@ -53,7 +55,7 @@ import { onBeforeUnmount, ref, shallowRef } from 'vue'
 import '@wangeditor-next/editor/dist/css/style.css'
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
 import type { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor-next/editor'
-import { registerBilibiliPlugin } from 'wangeditor-next-plugin-bilibili'
+import { registerBilibiliPlugin } from '@vaebe/wangeditor-next-plugin-bilibili'
 
 // 仅在客户端、创建编辑器前注册
 registerBilibiliPlugin()
@@ -95,7 +97,7 @@ import '@wangeditor-next/editor/dist/css/style.css'
 import { useEffect, useState } from 'react'
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-react'
 import type { IDomEditor, IEditorConfig, IToolbarConfig } from '@wangeditor-next/editor'
-import { registerBilibiliPlugin } from 'wangeditor-next-plugin-bilibili'
+import { registerBilibiliPlugin } from '@vaebe/wangeditor-next-plugin-bilibili'
 
 registerBilibiliPlugin()
 
@@ -133,7 +135,7 @@ export function MyEditor() {
 ```ts
 import '@wangeditor-next/editor/dist/css/style.css'
 import { createEditor, createToolbar } from '@wangeditor-next/editor'
-import { registerBilibiliPlugin } from 'wangeditor-next-plugin-bilibili'
+import { registerBilibiliPlugin } from '@vaebe/wangeditor-next-plugin-bilibili'
 
 registerBilibiliPlugin()
 
